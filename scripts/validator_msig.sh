@@ -29,7 +29,8 @@ SCRIPT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd -P)
 
 STAKE="${1:-100000}"
 
-MSIG_ADDR="${KEYS_DIR}/${VALIDATOR_NAME}.addr"
+MSIG_ADDR=$(cat "${KEYS_DIR}/${VALIDATOR_NAME}.addr")
+echo "INFO: MSIG_ADDR = ${MSIG_ADDR}"
 ELECTIONS_WORK_DIR="${KEYS_DIR}/elections"
 mkdir -p "${ELECTIONS_WORK_DIR}"
 
@@ -98,7 +99,7 @@ if [ "$election_id" == "0" ]; then
 
         elector_addr=$(cat "${ELECTIONS_WORK_DIR}/elector-addr-base64")
 
-        "${TON_BUILD_DIR}/crypto/fift" -I "${TON_BUILD_DIR}/crypto/lib:${TON_BUILD_DIR}/crypto/smartcont" -s recover-stake.fif "${ELECTIONS_WORK_DIR}/recover-query.boc"
+        "${TON_BUILD_DIR}/crypto/fift" -I "${TON_SRC_DIR}/crypto/fift/lib:${TON_SRC_DIR}/crypto/smartcont" -s recover-stake.fif "${ELECTIONS_WORK_DIR}/recover-query.boc"
 
         recover_query_boc=$(xxd -pc 180 "${ELECTIONS_WORK_DIR}/recover-query.boc" | base64 --wrap=0)
 
@@ -155,7 +156,7 @@ date +"INFO: %F %T Elections $election_id"
     &>"${ELECTIONS_WORK_DIR}/elector-params"
 
 awk -v validator="${VALIDATOR_NAME}" -v wallet_addr="$MSIG_ADDR" -v TON_BUILD_DIR="${TON_BUILD_DIR}" \
-    -v KEYS_DIR="${KEYS_DIR}" -v ELECTIONS_WORK_DIR="${ELECTIONS_WORK_DIR}" '{
+    -v KEYS_DIR="${KEYS_DIR}" -v ELECTIONS_WORK_DIR="${ELECTIONS_WORK_DIR}" -v TON_SRC_DIR="${TON_SRC_DIR}" '{
     if (NR == 1) {
         election_start = $1 + 0
     } else if (($1 == "created") && ($2 == "new") && ($3 == "key")) {
@@ -183,7 +184,7 @@ awk -v validator="${VALIDATOR_NAME}" -v wallet_addr="$MSIG_ADDR" -v TON_BUILD_DI
         printf "-c \"addvalidatoraddr " key " " key_adnl " " election_stop "\" ";
         print  "-c \"quit\"";
         printf TON_BUILD_DIR "/crypto/fift ";
-        printf "-I " TON_BUILD_DIR "/crypto/lib:" TON_BUILD_DIR "/crypto/smartcont ";
+        printf "-I " TON_SRC_DIR "/crypto/fift/lib:" TON_SRC_DIR "/crypto/smartcont ";
         printf "-s validator-elect-req.fif " wallet_addr;
         printf " " election_start " 2 " key_adnl " " ELECTIONS_WORK_DIR "/validator-to-sign.bin ";
         print  "> " ELECTIONS_WORK_DIR "/" validator "-request-dump"
@@ -207,7 +208,7 @@ awk -v validator="${VALIDATOR_NAME}" -v TON_BUILD_DIR="${TON_BUILD_DIR}" -v KEYS
 bash -x "${ELECTIONS_WORK_DIR}/elector-run2"
 
 awk -v validator="${VALIDATOR_NAME}" -v wallet_addr="$MSIG_ADDR" -v TON_BUILD_DIR="${TON_BUILD_DIR}" \
-    -v ELECTIONS_WORK_DIR="${ELECTIONS_WORK_DIR}" '{
+    -v ELECTIONS_WORK_DIR="${ELECTIONS_WORK_DIR}" -v TON_SRC_DIR="${TON_SRC_DIR}" '{
     if (NR == 1) {
         election_start = $1 + 0
     } else if (($1 == "got") && ($2 == "public") && ($3 == "key:")) {
@@ -216,7 +217,7 @@ awk -v validator="${VALIDATOR_NAME}" -v wallet_addr="$MSIG_ADDR" -v TON_BUILD_DI
         signature = $3
     } else if (($1 == "created") && ($2 == "new") && ($3 == "key")) {
         printf TON_BUILD_DIR "/crypto/fift ";
-        printf "-I " TON_BUILD_DIR "/crypto/lib:" TON_BUILD_DIR "/crypto/smartcont ";
+        printf "-I " TON_SRC_DIR "/crypto/fift/lib:" TON_SRC_DIR "/crypto/smartcont ";
         printf "-s validator-elect-signed.fif " wallet_addr " " election_start " 2 " $4;
         printf " " key " " signature " " ELECTIONS_WORK_DIR "/validator-query.boc ";
         print  "> " ELECTIONS_WORK_DIR "/" validator "-request-dump2"
