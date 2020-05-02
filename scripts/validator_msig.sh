@@ -233,7 +233,7 @@ elector_addr=$(cat "${ELECTIONS_WORK_DIR}/elector-addr-base64")
     "{\"dest\":\"${elector_addr}\",\"value\":\"${NANOSTAKE}\",\"bounce\":true,\"allBalance\":false,\"payload\":\"${validator_query_boc}\"" \
     --abi "${NET_TON_DEV_SRC_TOP_DIR}/configs/MultisigWallet.abi.json" \
     --sign "${KEYS_DIR}/msig.keys.json" \
-    >process_new_stake.transId
+    >"${ELECTIONS_WORK_DIR}/process_new_stake.transId"
 
 # TODO: add check if tonos-cli is failed
 transactionId=$(grep transId "${ELECTIONS_WORK_DIR}/process_new_stake.transId")
