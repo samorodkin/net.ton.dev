@@ -107,7 +107,7 @@ if [ "$election_id" == "0" ]; then
             "{\"dest\":\"${elector_addr}\",\"value\":\"1000000000\",\"bounce\":true,\"allBalance\":false,\"payload\":\"${recover_query_boc}\"}" \
             --abi "${NET_TON_DEV_SRC_TOP_DIR}/configs/MultisigWallet.abi.json" \
             --sign "${KEYS_DIR}/msig.keys.json" \
-            >recover_stake.transId
+            >"${ELECTIONS_WORK_DIR}/recover_stake.transId"
 
         transactionId=$(grep transId "${ELECTIONS_WORK_DIR}/recover_stake.transId")
         echo "INFO: transactionId = $transactionId" # send to other custodians for confirmation
