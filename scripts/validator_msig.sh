@@ -101,7 +101,7 @@ if [ "$election_id" == "0" ]; then
 
         "${TON_BUILD_DIR}/crypto/fift" -I "${TON_SRC_DIR}/crypto/fift/lib:${TON_SRC_DIR}/crypto/smartcont" -s recover-stake.fif "${ELECTIONS_WORK_DIR}/recover-query.boc"
 
-        recover_query_boc=$(xxd -pc 180 "${ELECTIONS_WORK_DIR}/recover-query.boc" | base64 --wrap=0)
+        recover_query_boc=$(xxd -p -c 180 "${ELECTIONS_WORK_DIR}/recover-query.boc" | base64 --wrap=0)
 
         "${TON_BUILD_DIR}/utils/tonos-cli" call "${MSIG_ADDR}" submitTransaction \
             "{\"dest\":\"${elector_addr}\",\"value\":\"1000000000\",\"bounce\":true,\"allBalance\":false,\"payload\":\"${recover_query_boc}\"}" \
@@ -227,7 +227,7 @@ awk -v validator="${VALIDATOR_NAME}" -v wallet_addr="$MSIG_ADDR" -v TON_BUILD_DI
 bash -x "${ELECTIONS_WORK_DIR}/elector-run3"
 
 #send validator query to elector contract using multisig
-validator_query_boc=$(xxd -pc 180 "${ELECTIONS_WORK_DIR}/validator-query.boc" | base64 --wrap=0)
+validator_query_boc=$(xxd -p -c 180 "${ELECTIONS_WORK_DIR}/validator-query.boc" | base64 --wrap=0)
 elector_addr=$(cat "${ELECTIONS_WORK_DIR}/elector-addr-base64")
 
 "${TON_BUILD_DIR}/utils/tonos-cli" call "${MSIG_ADDR}" submitTransaction \
