@@ -1,5 +1,7 @@
 #!/bin/bash -eE
 
+set -o pipefail
+
 # Copyright 2018-2020 TON DEV SOLUTIONS LTD.
 #
 # Licensed under the SOFTWARE EVALUATION License (the "License"); you may not use
@@ -101,8 +103,7 @@ if [ "$election_id" == "0" ]; then
 
         "${TON_BUILD_DIR}/crypto/fift" -I "${TON_SRC_DIR}/crypto/fift/lib:${TON_SRC_DIR}/crypto/smartcont" -s recover-stake.fif "${ELECTIONS_WORK_DIR}/recover-query.boc"
 
-#        recover_query_boc=$(xxd -p -c 180 "${ELECTIONS_WORK_DIR}/recover-query.boc" | base64 --wrap=0)
-        recover_query_boc=$(xxd -p -c 180 "${ELECTIONS_WORK_DIR}/recover-query.boc")
+        recover_query_boc=$(base64 --wrap=0 "${ELECTIONS_WORK_DIR}/recover-query.boc")
 
         "${TON_BUILD_DIR}/utils/tonos-cli" call "${MSIG_ADDR}" submitTransaction \
             "{\"dest\":\"${elector_addr}\",\"value\":\"1000000000\",\"bounce\":true,\"allBalance\":false,\"payload\":\"${recover_query_boc}\"}" \
@@ -228,8 +229,7 @@ awk -v validator="${VALIDATOR_NAME}" -v wallet_addr="$MSIG_ADDR" -v TON_BUILD_DI
 bash -x "${ELECTIONS_WORK_DIR}/elector-run3"
 
 #send validator query to elector contract using multisig
-#validator_query_boc=$(xxd -p -c 180 "${ELECTIONS_WORK_DIR}/validator-query.boc" | base64 --wrap=0)
-validator_query_boc=$(xxd -p -c 180 "${ELECTIONS_WORK_DIR}/validator-query.boc")
+validator_query_boc=$(base64 --wrap=0 "${ELECTIONS_WORK_DIR}/validator-query.boc")
 elector_addr=$(cat "${ELECTIONS_WORK_DIR}/elector-addr-base64")
 
 "${TON_BUILD_DIR}/utils/tonos-cli" call "${MSIG_ADDR}" submitTransaction \
