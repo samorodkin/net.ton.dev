@@ -65,20 +65,14 @@ awk '{
 election_id=$(cat "${ELECTIONS_WORK_DIR}/election-id")
 
 if [ "$election_id" == "0" ]; then
-    date +"%F %T No current elections"
-    awk -v TON_BUILD_DIR="${TON_BUILD_DIR}" -v KEYS_DIR="${KEYS_DIR}" -v ELECTIONS_WORK_DIR="${ELECTIONS_WORK_DIR}" '{
-        if (($1 == "new") && ($2 == "wallet") && ($3 == "address")) {
-            addr = substr($5, 4)
-        } else if (substr($1, length($1)-13) == "ConfigParam(1)") {
-            printf TON_BUILD_DIR "/lite-client/lite-client ";
-            printf "-p " KEYS_DIR "/liteserver.pub -a 127.0.0.1:3031 ";
-            printf "-rc \"runmethod -1:" substr($4, 15, 64);
-            printf " compute_returned_stake 0x" addr "\" ";
-            print  " -rc \"quit\" &> " ELECTIONS_WORK_DIR "/recover-state"
-        }
-    }' "${ELECTIONS_WORK_DIR}/${VALIDATOR_NAME}-dump" "${ELECTIONS_WORK_DIR}/elector-addr" >"${ELECTIONS_WORK_DIR}/recover-run"
+    date +"INFO: %F %T No current elections"
 
-    bash -x "${ELECTIONS_WORK_DIR}/recover-run"
+    elector_addr=$(cat "${ELECTIONS_WORK_DIR}/elector-addr-base64")
+
+    "${TON_BUILD_DIR}/lite-client/lite-client" \
+        "${KEYS_DIR}/liteserver.pub" -a 127.0.0.1:3031 \
+        -rc "runmethod ${elector_addr} compute_returned_stake 0x$(echo "${MSIG_ADDR}" | cut -d ':' -f 2)" \
+        -rc "quit" &>"${ELECTIONS_WORK_DIR}/recover-state"
 
     awk '{
         if ($1 == "result:") {
@@ -89,18 +83,6 @@ if [ "$election_id" == "0" ]; then
     recover_amount=$(cat "${ELECTIONS_WORK_DIR}/recover-amount")
 
     if [ "$recover_amount" != "0" ]; then
-        awk -v TON_BUILD_DIR="${TON_BUILD_DIR}" -v KEYS_DIR="${KEYS_DIR}" -v ELECTIONS_WORK_DIR="${ELECTIONS_WORK_DIR}" '{
-            if ($1 == "Bounceable") {
-                printf TON_BUILD_DIR "/lite-client/lite-client ";
-                printf "-p " KEYS_DIR "/liteserver.pub -a 127.0.0.1:3031 ";
-                print  "-rc \"getaccount " $6 "\" -rc \"quit\" &> " ELECTIONS_WORK_DIR "/recover-state"
-            }
-        }' "${ELECTIONS_WORK_DIR}/${VALIDATOR_NAME}-dump" >"${ELECTIONS_WORK_DIR}/recover-run1"
-
-        bash -x "${ELECTIONS_WORK_DIR}/recover-run1"
-
-        elector_addr=$(cat "${ELECTIONS_WORK_DIR}/elector-addr-base64")
-
         "${TON_BUILD_DIR}/crypto/fift" -I "${TON_SRC_DIR}/crypto/fift/lib:${TON_SRC_DIR}/crypto/smartcont" -s recover-stake.fif "${ELECTIONS_WORK_DIR}/recover-query.boc"
 
         recover_query_boc=$(base64 --wrap=0 "${ELECTIONS_WORK_DIR}/recover-query.boc")
