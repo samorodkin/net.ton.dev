@@ -233,7 +233,7 @@ validator_query_boc=$(xxd -p -c 180 "${ELECTIONS_WORK_DIR}/validator-query.boc")
 elector_addr=$(cat "${ELECTIONS_WORK_DIR}/elector-addr-base64")
 
 "${TON_BUILD_DIR}/utils/tonos-cli" call "${MSIG_ADDR}" submitTransaction \
-    "{\"dest\":\"${elector_addr}\",\"value\":\"${NANOSTAKE}\",\"bounce\":true,\"allBalance\":false,\"payload\":\"${validator_query_boc}\"" \
+    "{\"dest\":\"${elector_addr}\",\"value\":\"${NANOSTAKE}\",\"bounce\":true,\"allBalance\":false,\"payload\":\"${validator_query_boc}\"}" \
     --abi "${NET_TON_DEV_SRC_TOP_DIR}/configs/MultisigWallet.abi.json" \
     --sign "${KEYS_DIR}/msig.keys.json" \
     >"${ELECTIONS_WORK_DIR}/process_new_stake.transId"
