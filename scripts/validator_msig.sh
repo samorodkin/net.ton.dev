@@ -54,7 +54,7 @@ awk -v TON_BUILD_DIR="${TON_BUILD_DIR}" -v KEYS_DIR="${KEYS_DIR}" -v ELECTIONS_W
     }
 }' "${ELECTIONS_WORK_DIR}/elector-addr" >"${ELECTIONS_WORK_DIR}/elector-run"
 
-bash -x "${ELECTIONS_WORK_DIR}/elector-run"
+bash "${ELECTIONS_WORK_DIR}/elector-run"
 
 awk '{
     if ($1 == "result:") {
@@ -70,7 +70,7 @@ if [ "$election_id" == "0" ]; then
     elector_addr=$(cat "${ELECTIONS_WORK_DIR}/elector-addr-base64")
 
     "${TON_BUILD_DIR}/lite-client/lite-client" \
-        "${KEYS_DIR}/liteserver.pub" -a 127.0.0.1:3031 \
+        -p "${KEYS_DIR}/liteserver.pub" -a 127.0.0.1:3031 \
         -rc "runmethod ${elector_addr} compute_returned_stake 0x$(echo "${MSIG_ADDR}" | cut -d ':' -f 2)" \
         -rc "quit" &>"${ELECTIONS_WORK_DIR}/recover-state"
 
@@ -176,7 +176,7 @@ awk -v validator="${VALIDATOR_NAME}" -v wallet_addr="$MSIG_ADDR" -v TON_BUILD_DI
 }' "${ELECTIONS_WORK_DIR}/election-id" "${ELECTIONS_WORK_DIR}/${VALIDATOR_NAME}-election-key" \
     "${ELECTIONS_WORK_DIR}/${VALIDATOR_NAME}-election-adnl-key" "${ELECTIONS_WORK_DIR}/elector-params" >"${ELECTIONS_WORK_DIR}/elector-run1"
 
-bash -x "${ELECTIONS_WORK_DIR}/elector-run1"
+bash "${ELECTIONS_WORK_DIR}/elector-run1"
 
 awk -v validator="${VALIDATOR_NAME}" -v TON_BUILD_DIR="${TON_BUILD_DIR}" -v KEYS_DIR="${KEYS_DIR}" -v ELECTIONS_WORK_DIR="${ELECTIONS_WORK_DIR}" '{
     if (NR == 2) {
@@ -189,7 +189,7 @@ awk -v validator="${VALIDATOR_NAME}" -v TON_BUILD_DIR="${TON_BUILD_DIR}" -v KEYS
    }
 }' "${ELECTIONS_WORK_DIR}/${VALIDATOR_NAME}-request-dump" "${ELECTIONS_WORK_DIR}/${VALIDATOR_NAME}-election-key" >"${ELECTIONS_WORK_DIR}/elector-run2"
 
-bash -x "${ELECTIONS_WORK_DIR}/elector-run2"
+bash "${ELECTIONS_WORK_DIR}/elector-run2"
 
 awk -v validator="${VALIDATOR_NAME}" -v wallet_addr="$MSIG_ADDR" -v TON_BUILD_DIR="${TON_BUILD_DIR}" \
     -v ELECTIONS_WORK_DIR="${ELECTIONS_WORK_DIR}" -v TON_SRC_DIR="${TON_SRC_DIR}" '{
@@ -208,7 +208,7 @@ awk -v validator="${VALIDATOR_NAME}" -v wallet_addr="$MSIG_ADDR" -v TON_BUILD_DI
     }
 }' "${ELECTIONS_WORK_DIR}/election-id" "${ELECTIONS_WORK_DIR}/${VALIDATOR_NAME}-request-dump1" "${ELECTIONS_WORK_DIR}/${VALIDATOR_NAME}-election-adnl-key" >"${ELECTIONS_WORK_DIR}/elector-run3"
 
-bash -x "${ELECTIONS_WORK_DIR}/elector-run3"
+bash "${ELECTIONS_WORK_DIR}/elector-run3"
 
 #send validator query to elector contract using multisig
 validator_query_boc=$(base64 --wrap=0 "${ELECTIONS_WORK_DIR}/validator-query.boc")
