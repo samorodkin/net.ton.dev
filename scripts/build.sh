@@ -1,3 +1,4 @@
+
 #!/bin/bash -eE
 
 # Copyright 2020 TON DEV SOLUTIONS LTD.

@@ -35,7 +35,7 @@ export TON_WORK_DIR="/var/ton-work"
 export UTILS_DIR="${TON_BUILD_DIR}/utils"
 export KEYS_DIR="$HOME/ton-keys"
 export CONFIGS_DIR="${NET_TON_DEV_SRC_TOP_DIR}/configs"
-export ADNL_PORT="30310"
+export ADNL_PORT="30300"
 HOSTNAME=$(hostname -s)
 export HOSTNAME
 export VALIDATOR_NAME="$HOSTNAME"
