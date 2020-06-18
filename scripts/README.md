@@ -1,6 +1,6 @@
 # README
 
-This HOWTO contains instructions on how to use some of the scripts located here. The instructions and scripts below were verified on Ubuntu 18.04.
+This HOWTO contains instructions on how to use some of the scripts located here. The instructions and scripts below were verified on Ubuntu 18.04 and 20.04. Monitoring dashboard setup instructions see configs/telegraf.conf
 # Scripts
 
 ## build.sh
@@ -55,5 +55,6 @@ Example:
 Simple script which displays current wallet's balance. Primary purpose is monitoring with external tools (at least until tonos-cli upgrade).
 
 Example:
+   `./get_balance.sh`
    `./get_balance.sh <ALONGBUTNOTLONELYWALLET>`
 
