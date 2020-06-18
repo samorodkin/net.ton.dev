@@ -41,5 +41,6 @@ if [ "$1" != "-q" ]
 then
   echo "INFO: TIME_DIFF = ${TIME_DIFF}"
 else
+  echo $(( 0 - TIME_DIFF )) > /var/ton-work/timediff.log
   echo $(( 0 - TIME_DIFF ))
 fi
