@@ -1,6 +1,10 @@
 #!/bin/bash
 
-. ./env.sh
+SCRIPT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd -P)
+# shellcheck source=env.sh
+. "${SCRIPT_DIR}/env.sh"
+
+cd $SCRIPT_DIR
 
 if [ "$1" == "" ]
 then
