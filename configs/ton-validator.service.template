@@ -7,8 +7,10 @@ Wants=network-online.target
 [Service]
 Type=simple
 ExecStart=SCRIPT_DIR/run.sh --service
+ExecStop=/bin/pkill -f validator-engine
 TimeoutStopSec=60
 Restart=always
+User=dmitry
 
 [Install]
 WantedBy=multi-user.target
